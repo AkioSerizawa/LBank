@@ -18,7 +18,8 @@ public class AccountMap : IEntityTypeConfiguration<Account>
         builder.Property(x => x.AccountBalance)
             .IsRequired()
             .HasColumnName("AccountBalance")
-            .HasColumnType("Decimal");
+            .HasColumnType("Decimal")
+            .HasPrecision(18, 2);
 
         builder.HasOne(x => x.User)
             .WithMany(x => x.Account)

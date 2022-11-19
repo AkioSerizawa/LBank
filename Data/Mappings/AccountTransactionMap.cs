@@ -35,7 +35,8 @@ public class AccountTransactionMap : IEntityTypeConfiguration<AccountTransaction
         builder.Property(x => x.TransactionValue)
             .IsRequired()
             .HasColumnName("TransactionValue")
-            .HasColumnType("Decimal");
+            .HasColumnType("Decimal")
+            .HasPrecision(18, 2);
 
         builder.HasOne(x => x.TransactionType)
             .WithMany(x => x.AccountTransaction)
