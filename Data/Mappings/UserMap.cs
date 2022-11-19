@@ -28,6 +28,7 @@ public class UserMap : IEntityTypeConfiguration<User>
             .HasMaxLength(220);
 
         builder.Property(x => x.UserSlug)
+            .IsRequired(false)
             .HasColumnName("UserSlug")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(65);
@@ -35,6 +36,7 @@ public class UserMap : IEntityTypeConfiguration<User>
         builder.Property(x => x.UserPassword)
             .IsRequired()
             .HasColumnName("UserPassword")
-            .HasColumnType("NVARCHAR");
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(400);
     }
 }

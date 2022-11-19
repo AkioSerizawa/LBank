@@ -16,11 +16,13 @@ public class AccountTransactionMap : IEntityTypeConfiguration<AccountTransaction
             .UseIdentityColumn();
 
         builder.Property(x => x.TransactionDocument)
+            .IsRequired(false)
             .HasColumnName("TransactionDocument")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(35);
 
         builder.Property(x => x.TransactionHistory)
+            .IsRequired(false)
             .HasColumnName("TransactionHistory")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(220);
