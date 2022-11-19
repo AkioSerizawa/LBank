@@ -10,7 +10,7 @@ namespace LBank.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    [HttpGet("v1/Account/")]
+    [HttpGet("v1/account/")]
     public async Task<IActionResult> GetAccountAsync(
         [FromServices] DataContext context)
     {
