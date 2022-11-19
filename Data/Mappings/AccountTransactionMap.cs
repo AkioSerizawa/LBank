@@ -45,6 +45,6 @@ public class AccountTransactionMap : IEntityTypeConfiguration<AccountTransaction
             .WithMany(x => x.AccountTransaction)
             .HasForeignKey(x => x.AccountId)
             .HasConstraintName("FK_TRANSACTION_ACCOUNT")
-            .OnDelete(DeleteBehavior.Cascade;
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

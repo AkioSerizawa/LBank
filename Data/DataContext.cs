@@ -20,6 +20,7 @@ public class DataContext : DbContext
     {
         modelBuilder.ApplyConfiguration(new AccountMap());
         modelBuilder.ApplyConfiguration(new AccountTransactionMap());
+        modelBuilder.ApplyConfiguration(new TransactionTypeMap());
         modelBuilder.ApplyConfiguration(new UserMap());
     }
 }
