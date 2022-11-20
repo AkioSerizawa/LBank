@@ -13,17 +13,17 @@ public class AccountTransactionService : IAccountTransactionService
             using var context = new DataContext();
 
             var account = context.Accounts.Include(x => x.User).FirstOrDefault(x => x.AccountId == accountId);
-            var accountTrasfer = context.Accounts.Include(x => x.User)
+            var accountTransfer = context.Accounts.Include(x => x.User)
                 .FirstOrDefault(x => x.AccountId == accountTransferId);
 
             decimal valueBalanceDebit = balanceDebit(account.AccountBalance, valueTransfer);
-            decimal valueBalanceCredit = balanceCredit(accountTrasfer.AccountBalance, valueTransfer);
+            decimal valueBalanceCredit = balanceCredit(accountTransfer.AccountBalance, valueTransfer);
 
             account.AccountBalance = valueBalanceDebit;
-            accountTrasfer.AccountBalance = valueBalanceCredit;
+            accountTransfer.AccountBalance = valueBalanceCredit;
 
             context.Update(account);
-            context.Update(accountTrasfer);
+            context.Update(accountTransfer);
             context.SaveChanges();
         }
         catch (Exception ex)
