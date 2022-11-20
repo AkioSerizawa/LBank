@@ -1,6 +1,7 @@
 using LBank.Data;
 using LBank.Extensions;
 using LBank.Models;
+using LBank.Services;
 using LBank.Utils;
 using LBank.ViewModel;
 using LBank.ViewModel.Account;
@@ -12,6 +13,8 @@ namespace LBank.Controllers;
 [ApiController]
 public class AccountTransactionController : ControllerBase
 {
+    private AccountTransactionService accountTransactionService = new AccountTransactionService();
+
     [HttpPost("v1/account/transfer")]
     public async Task<IActionResult> TransferAsync(
         [FromBody] TransferViewModel model,
@@ -79,11 +82,26 @@ public class AccountTransactionController : ControllerBase
             await context.AccountTransactions.AddAsync(transfer);
             await context.SaveChangesAsync();
 
+            switch (transfer.TypeId)
+            {
+                case 1:
+                    accountTransactionService.accountBalanceCreditDebit(
+                        transfer.TransactionValue,
+                        transfer.AccountId,
+                        transfer.AccountTransferId);
+                    break;
+                case 2:
+                    accountTransactionService.accountDeposit(model.TransactionValue, model.AccountTransferId);
+                    break;
+                case 3:
+                    accountTransactionService.accountWithdraw(model.TransactionValue, model.AccountTransferId);
+                    break;
+            }
+
             return Ok(new ResultViewModel<dynamic>(new
             {
                 transfer = accountTransfer.User.UserName, transfer.TransactionId, transfer.TransactionValue,
-                transfer.TransactionHistory,
-                transfer.TransactionDate, transfer.TransactionType.TypeDescription
+                transfer.TransactionHistory, transfer.TransactionDate, transfer.TransactionType.TypeDescription
             }));
         }
         catch (DbUpdateException ex)
