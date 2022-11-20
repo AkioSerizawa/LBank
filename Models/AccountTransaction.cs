@@ -9,6 +9,7 @@ public class AccountTransaction
     public decimal TransactionValue { get; set; }
     public int TypeId { get; set; }
     public int AccountId { get; set; }
+    public int AccountTransferId { get; set; }
 
     public Account Account { get; set; }
     public TransactionType TransactionType { get; set; }

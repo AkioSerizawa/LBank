@@ -31,4 +31,27 @@ public class UtilMessages
     public static string account03XE03() => $"03XE03 - Nenhuma conta bancaria encontrada!";
 
     #endregion
+
+    #region AccountTransaction
+
+    public static string accountTransaction04XE01(Exception ex) =>
+        $"04XE01 - Falha interna no servidor - | {ex.Message} |";
+
+    public static string accountTransaction04XE02(decimal transactionValue) =>
+        $"O Valor da transferencia não pode ser negativo - | Valor informado: $ {transactionValue} |";
+
+    public static string accountTransaction04XE03(DateTime transactionDate) =>
+        $"A data não pode ser menor que a data atual - | Data informada: {transactionDate} |";
+
+    #endregion
+
+    #region TransactionType
+
+    public static string type05XE01(Exception ex) =>
+        $"05XE01 - Falha interna no servidor - | {ex.Message} |";
+
+    public static string type05XE02(int id) =>
+        $"05XE02 - Nenhuma tipo de movimentação encontrado! | Movimentação pesquisada - '{id}' |";
+
+    #endregion
 }
