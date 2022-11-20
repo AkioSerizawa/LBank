@@ -1,9 +1,10 @@
 using LBank.Data;
+using LBank.Interface;
 using LBank.Models;
 
 namespace LBank.Services;
 
-public class AccountService
+public class AccountService : IAccountService
 {
     public int AccountCreate(int userId)
     {

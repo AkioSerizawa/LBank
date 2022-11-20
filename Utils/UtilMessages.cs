@@ -43,6 +43,8 @@ public class UtilMessages
     public static string accountTransaction04XE03(DateTime transactionDate) =>
         $"A data não pode ser menor que a data atual - | Data informada: {transactionDate} |";
 
+    public static string accountTransaction04XE04(Exception ex) => $"Falha ao fazer a movimentação - | {ex.Message} |";
+
     #endregion
 
     #region TransactionType
