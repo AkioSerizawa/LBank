@@ -38,12 +38,18 @@ public class UtilMessages
         $"04XE01 - Falha interna no servidor - | {ex.Message} |";
 
     public static string accountTransaction04XE02(decimal transactionValue) =>
-        $"O Valor da transferencia não pode ser negativo - | Valor informado: $ {transactionValue} |";
+        $"04XE02 - O Valor da transferencia não pode ser negativo - | Valor informado: $ {transactionValue} |";
 
     public static string accountTransaction04XE03(DateTime transactionDate) =>
-        $"A data não pode ser menor que a data atual - | Data informada: {transactionDate} |";
+        $"04XE03 - A data não pode ser menor que a data atual - | Data informada: {transactionDate} |";
 
-    public static string accountTransaction04XE04(Exception ex) => $"Falha ao fazer a movimentação - | {ex.Message} |";
+    public static string accountTransaction04XE04(Exception ex) =>
+        $"04XE04 - Falha ao fazer a movimentação - | {ex.Message} |";
+
+    public static string accountTransaction04XE05() => $"04XE05 - Nenhuma movimentação bancaria encontrada!";
+
+    public static string accountTransaction04XE06(int id) =>
+        $"04XE06 - Nenhuma movimentação bancaria encontrada! | Conta pesquisada - '{id}' |";
 
     #endregion
 

@@ -113,4 +113,58 @@ public class AccountTransactionController : ControllerBase
             return StatusCode(500, new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE01(ex)));
         }
     }
+
+    [HttpGet("v1/account/transfer")]
+    public async Task<IActionResult> GetAllAysnc(
+        [FromServices] DataContext context)
+    {
+        try
+        {
+            var accountTransaction = await context
+                .AccountTransactions
+                .Where(x => x.AccountId == 1)
+                .ToListAsync();
+
+            if (accountTransaction.Count == 0)
+                return NotFound(new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE05()));
+
+            return Ok(new ResultViewModel<List<AccountTransaction>>(accountTransaction));
+        }
+        catch (TimeoutException ex)
+        {
+            return StatusCode(408, new ResultViewModel<AccountTransaction>(UtilMessages.information01XE01(ex)));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE01(ex)));
+        }
+    }
+
+    [HttpGet("v1/account/transfer/{id:int}")]
+    public async Task<IActionResult> GetByTransferAsync(
+        [FromRoute] int id,
+        [FromServices] DataContext context)
+    {
+        try
+        {
+            var accountTransaction = await context
+                .AccountTransactions
+                .Where(x => x.AccountId == 1)
+                .Where(x => x.AccountTransferId == id)
+                .ToListAsync();
+
+            if (accountTransaction.Count == 0)
+                return NotFound(new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE06(id)));
+
+            return Ok(new ResultViewModel<List<AccountTransaction>>(accountTransaction));
+        }
+        catch (TimeoutException ex)
+        {
+            return StatusCode(408, new ResultViewModel<AccountTransaction>(UtilMessages.information01XE01(ex)));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE01(ex)));
+        }
+    }
 }
