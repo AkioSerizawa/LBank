@@ -1,4 +1,5 @@
 using LBank.Data;
+using LBank.Enumerators;
 using LBank.Extensions;
 using LBank.Models;
 using LBank.Services;
@@ -31,6 +32,15 @@ public class AccountTransactionController : ControllerBase
             return BadRequest(
                 new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE03(model.TransactionDate)));
 
+        var account = await context
+            .Accounts
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.AccountId == 1);
+
+        if (account == null)
+            return NotFound(
+                new ResultViewModel<Account>(UtilMessages.account03XE02(account.AccountId)));
+
         var accountTransfer = await context
             .Accounts
             .Include(x => x.User)
@@ -39,6 +49,11 @@ public class AccountTransactionController : ControllerBase
         if (accountTransfer == null)
             return NotFound(
                 new ResultViewModel<Account>(UtilMessages.account03XE02(accountTransfer.AccountId)));
+
+        if (model.TransactionValue > account.AccountBalance &&
+            model.TypeId == (int)ETransactionType.DebitoCredito)
+            return NotFound(
+                new ResultViewModel<Account>(UtilMessages.accountTransaction04XE07(model.TransactionValue)));
 
         if (model.TransactionHistory == String.Empty)
         {
@@ -84,16 +99,16 @@ public class AccountTransactionController : ControllerBase
 
             switch (transfer.TypeId)
             {
-                case 1:
+                case (int)ETransactionType.DebitoCredito:
                     accountTransactionService.accountBalanceCreditDebit(
                         transfer.TransactionValue,
                         transfer.AccountId,
                         transfer.AccountTransferId);
                     break;
-                case 2:
+                case (int)ETransactionType.Deposito:
                     accountTransactionService.accountDeposit(model.TransactionValue, model.AccountTransferId);
                     break;
-                case 3:
+                case (int)ETransactionType.Saque:
                     accountTransactionService.accountWithdraw(model.TransactionValue, model.AccountTransferId);
                     break;
             }

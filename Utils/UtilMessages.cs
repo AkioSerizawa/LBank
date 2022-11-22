@@ -51,6 +51,9 @@ public class UtilMessages
     public static string accountTransaction04XE06(int id) =>
         $"04XE06 - Nenhuma movimentação bancaria encontrada! | Conta pesquisada - '{id}' |";
 
+    public static string accountTransaction04XE07(decimal valueTransfer) =>
+        $"04XE07 - Valor da transferencia é maior que o saldo possuido | Valor da transferencia: $ {valueTransfer} |";
+
     #endregion
 
     #region TransactionType
