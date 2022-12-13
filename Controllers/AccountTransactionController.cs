@@ -15,6 +15,8 @@ namespace LBank.Controllers;
 public class AccountTransactionController : ControllerBase
 {
     private AccountTransactionService accountTransactionService = new AccountTransactionService();
+    private AccountService accountService = new AccountService();
+    private TransactionTypeService transactionService = new TransactionTypeService();
 
     [HttpPost("v1/account/transfer")]
     public async Task<IActionResult> TransferAsync(
@@ -32,20 +34,12 @@ public class AccountTransactionController : ControllerBase
             return BadRequest(
                 new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE03(model.TransactionDate)));
 
-        var account = await context
-            .Accounts
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.AccountId == 1);
-
+        var account = accountService.AccountUserById(1);
         if (account == null)
             return NotFound(
                 new ResultViewModel<Account>(UtilMessages.account03XE02(account.AccountId)));
 
-        var accountTransfer = await context
-            .Accounts
-            .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.AccountId == model.AccountTransferId);
-
+        var accountTransfer = accountService.AccountUserById(model.AccountTransferId);
         if (accountTransfer == null)
             return NotFound(
                 new ResultViewModel<Account>(UtilMessages.account03XE02(accountTransfer.AccountId)));
@@ -59,10 +53,7 @@ public class AccountTransactionController : ControllerBase
         {
             try
             {
-                var typeTransfer = await context
-                    .TransactionTypes
-                    .FirstOrDefaultAsync(x => x.TypeId == model.TypeId);
-
+                var typeTransfer = transactionService.GetTransactionTypeById(model.TypeId);
                 if (typeTransfer == null)
                     return NotFound(new ResultViewModel<TransactionType>(UtilMessages.type05XE02(typeTransfer.TypeId)));
 
@@ -80,48 +71,43 @@ public class AccountTransactionController : ControllerBase
             }
         }
 
-        var transfer = new AccountTransaction
-        {
-            TransactionId = 0,
-            TransactionDocument = model.TransactionDocument,
-            TransactionHistory = model.TransactionHistory,
-            TransactionDate = model.TransactionDate,
-            TransactionValue = model.TransactionValue,
-            TypeId = model.TypeId,
-            AccountId = 1,
-            AccountTransferId = model.AccountTransferId
-        };
-
         try
         {
-            await context.AccountTransactions.AddAsync(transfer);
-            await context.SaveChangesAsync();
+            var transfer = new AccountTransaction
+            {
+                TransactionId = 0,
+                TransactionDocument = model.TransactionDocument,
+                TransactionHistory = model.TransactionHistory,
+                TransactionDate = model.TransactionDate,
+                TransactionValue = model.TransactionValue,
+                TypeId = model.TypeId,
+                AccountId = 1,
+                AccountTransferId = model.AccountTransferId
+            };
+
+            await accountTransactionService.CreateAccountTransactionAsync(transfer);
 
             switch (transfer.TypeId)
             {
                 case (int)ETransactionType.DebitoCredito:
-                    accountTransactionService.accountBalanceCreditDebit(
+                    accountTransactionService.AccountBalanceCreditDebit(
                         transfer.TransactionValue,
                         transfer.AccountId,
                         transfer.AccountTransferId);
                     break;
                 case (int)ETransactionType.Deposito:
-                    accountTransactionService.accountDeposit(model.TransactionValue, model.AccountTransferId);
+                    accountTransactionService.AccountDeposit(model.TransactionValue, model.AccountTransferId);
                     break;
                 case (int)ETransactionType.Saque:
-                    accountTransactionService.accountWithdraw(model.TransactionValue, model.AccountTransferId);
+                    accountTransactionService.AccountWithdraw(model.TransactionValue, model.AccountTransferId);
                     break;
             }
 
-            return Ok(new ResultViewModel<dynamic>(new
-            {
-                transfer = accountTransfer.User.UserName,
-                transfer.TransactionId,
-                transfer.TransactionValue,
-                transfer.TransactionHistory,
-                transfer.TransactionDate,
-                transfer.TransactionType.TypeDescription
-            }));
+            string dateFormact = transfer.TransactionDate.ToString("dd/MM/yyyy");
+
+            string extractMovimentation = $"Documento: {transfer.TransactionDocument} | Data da Movimentação: {dateFormact} | Valor: {transfer.TransactionValue} | De: {account.User.UserName} | Para: {accountTransfer.User.UserName} | Histórico: {transfer.TransactionHistory}";
+
+            return Ok(new ResultViewModel<string>(@$"Movimentação realizada com sucesso - {extractMovimentation}", null));
         }
         catch (DbUpdateException ex)
         {
@@ -194,7 +180,7 @@ public class AccountTransactionController : ControllerBase
     {
         try
         {
-            List<string> accountTransactionCollection = await accountTransactionService.extractAccount(id);
+            List<string> accountTransactionCollection = await accountTransactionService.ExtractAccount(id);
 
             if (accountTransactionCollection.Count == 0)
                 return NotFound(new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE06(id)));

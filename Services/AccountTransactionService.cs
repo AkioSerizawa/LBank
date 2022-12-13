@@ -1,12 +1,13 @@
 using LBank.Data;
 using LBank.Interface;
+using LBank.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LBank.Services;
 
 public class AccountTransactionService : IAccountTransactionService
 {
-    public void accountBalanceCreditDebit(decimal valueTransfer, int accountId, int accountTransferId)
+    public void AccountBalanceCreditDebit(decimal valueTransfer, int accountId, int accountTransferId)
     {
         try
         {
@@ -44,7 +45,7 @@ public class AccountTransactionService : IAccountTransactionService
         return balance;
     }
 
-    public void accountDeposit(decimal valueDeposit, int accountId)
+    public void AccountDeposit(decimal valueDeposit, int accountId)
     {
         try
         {
@@ -70,7 +71,7 @@ public class AccountTransactionService : IAccountTransactionService
         return deposit;
     }
 
-    public void accountWithdraw(decimal valueWithdraw, int accountId)
+    public void AccountWithdraw(decimal valueWithdraw, int accountId)
     {
         try
         {
@@ -95,7 +96,7 @@ public class AccountTransactionService : IAccountTransactionService
         return deposit;
     }
 
-    public async Task<List<string>> extractAccount(int accountId)
+    public async Task<List<string>> ExtractAccount(int accountId)
     {
         try
         {
@@ -111,9 +112,6 @@ public class AccountTransactionService : IAccountTransactionService
                 .Include(x => x.Account.User)
                 .Where(x => x.AccountId == accountId).OrderBy(x => x.TransactionDate).ToListAsync();
 
-            // if (accountTransaction.Count == 0)
-            //     return NotFound(new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE06(id)));
-
             foreach (var transactionItem in accountTransaction)
             {
                 string dateFormact = transactionItem.TransactionDate.ToString("dd/MM/yyyy");
@@ -126,6 +124,21 @@ public class AccountTransactionService : IAccountTransactionService
             }
 
             return extractAccountColections;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task CreateAccountTransactionAsync(AccountTransaction accountTransaction)
+    {
+        try
+        {
+            using var context = new DataContext();
+
+            await context.AccountTransactions.AddAsync(accountTransaction);
+            await context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
