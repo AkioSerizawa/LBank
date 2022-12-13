@@ -120,7 +120,7 @@ public class AccountTransactionController : ControllerBase
     }
 
     [HttpGet("v1/account/transfer")]
-    public async Task<IActionResult> GetAllAysnc(
+    public async Task<IActionResult> GetAllAsync(
         [FromServices] DataContext context)
     {
         try

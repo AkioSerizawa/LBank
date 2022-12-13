@@ -5,14 +5,14 @@ using LBank.Models;
 namespace LBank.Services;
 public class UserService : IUserService
 {
-    public int CreateUser(User registerModel)
+    public async Task<int> CreateUser(User registerModel)
     {
         try
         {
             using var context = new DataContext();
 
-            context.Users.Add(registerModel);
-            context.SaveChanges();
+            await context.Users.AddAsync(registerModel);
+            await context.SaveChangesAsync();
 
             return registerModel.UserId;
         }

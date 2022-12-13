@@ -40,7 +40,7 @@ public class UserController : ControllerBase
                 UserPassword = PasswordHasher.Hash(model.UserPassword)
             };
 
-            userService.CreateUser(user);
+            await userService.CreateUser(user);
             var account = accountService.AccountCreateUser(user.UserId);
 
             return Ok(new ResultViewModel<dynamic>(new
