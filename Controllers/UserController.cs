@@ -15,35 +15,39 @@ namespace LBank.Controllers;
 public class UserController : ControllerBase
 {
     private AccountService accountService = new AccountService();
+    private UserService userService = new UserService();
 
     [HttpPost("v1/user")]
     public async Task<IActionResult> CreateAsync(
         [FromBody] RegisterViewModel model,
         [FromServices] DataContext context)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
-
-        var user = new User
-        {
-            UserId = 0,
-            UserName = model.UserName,
-            UserEmail = model.UserEmail,
-            UserSlug = model.UserSlug,
-            UserPassword = PasswordHasher.Hash(model.UserPassword)
-        };
-
         try
         {
-            await context.Users.AddAsync(user);
-            await context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
 
-            var userId = user.UserId;
-            var account = accountService.AccountCreate(userId);
+            var userVerify = userService.GetUserByEmail(model.UserEmail);
+            if (userVerify != null)
+                return StatusCode(401, new ResultViewModel<User>(UtilMessages.user02XE05()));
+
+            var user = new User
+            {
+                UserId = 0,
+                UserName = model.UserName,
+                UserEmail = model.UserEmail,
+                UserSlug = model.UserSlug,
+                UserPassword = PasswordHasher.Hash(model.UserPassword)
+            };
+
+            userService.CreateUser(user);
+            var account = accountService.AccountCreateUser(user.UserId);
 
             return Ok(new ResultViewModel<dynamic>(new
             {
-                user = user.UserName, user.UserEmail, account
+                user = user.UserName,
+                user.UserEmail,
+                account
             }));
         }
         catch (DbUpdateException ex)
@@ -64,10 +68,7 @@ public class UserController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
 
-        var user = await context.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UserEmail == model.UserEmail);
-
+        var user = userService.GetUserByEmail(model.UserEmail);
         if (user == null)
             return StatusCode(401, new ResultViewModel<User>(UtilMessages.user02XE03()));
 
