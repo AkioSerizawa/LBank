@@ -94,4 +94,42 @@ public class AccountTransactionService : IAccountTransactionService
         decimal deposit = (accountBalance - valueWithdraw);
         return deposit;
     }
+
+    public async Task<List<string>> extractAccount(int accountId)
+    {
+        try
+        {
+            using var context = new DataContext();
+
+            List<string> extractAccountColections = new List<string>();
+
+            var accountTransaction = await context
+                .AccountTransactions
+                .AsNoTracking()
+                .Include(x => x.Account)
+                .Include(x => x.TransactionType)
+                .Include(x => x.Account.User)
+                .Where(x => x.AccountId == accountId).OrderBy(x => x.TransactionDate).ToListAsync();
+
+            // if (accountTransaction.Count == 0)
+            //     return NotFound(new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE06(id)));
+
+            foreach (var transactionItem in accountTransaction)
+            {
+                string dateFormact = transactionItem.TransactionDate.ToString("dd/MM/yyyy");
+
+                string extract = $"Tipo de Movimentação: {transactionItem.TransactionType.TypeDescription}" +
+                    $" | Histórico: {transactionItem.TransactionHistory} | Data: {dateFormact}" +
+                    $" | Transferecia para: {transactionItem.Account.User.UserName} | Valor: {transactionItem.TransactionValue}";
+
+                extractAccountColections.Add(extract);
+            }
+
+            return extractAccountColections;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
 }

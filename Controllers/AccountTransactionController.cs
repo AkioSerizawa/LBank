@@ -115,8 +115,12 @@ public class AccountTransactionController : ControllerBase
 
             return Ok(new ResultViewModel<dynamic>(new
             {
-                transfer = accountTransfer.User.UserName, transfer.TransactionId, transfer.TransactionValue,
-                transfer.TransactionHistory, transfer.TransactionDate, transfer.TransactionType.TypeDescription
+                transfer = accountTransfer.User.UserName,
+                transfer.TransactionId,
+                transfer.TransactionValue,
+                transfer.TransactionHistory,
+                transfer.TransactionDate,
+                transfer.TransactionType.TypeDescription
             }));
         }
         catch (DbUpdateException ex)
@@ -176,6 +180,26 @@ public class AccountTransactionController : ControllerBase
         catch (TimeoutException ex)
         {
             return StatusCode(408, new ResultViewModel<AccountTransaction>(UtilMessages.information01XE01(ex)));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE01(ex)));
+        }
+    }
+
+    [HttpGet("v1/account/extract/{id:int}")]
+    public async Task<IActionResult> GetAccountExtract(
+        [FromRoute] int id,
+        [FromServices] DataContext context)
+    {
+        try
+        {
+            List<string> accountTransactionCollection = await accountTransactionService.extractAccount(id);
+
+            if (accountTransactionCollection.Count == 0)
+                return NotFound(new ResultViewModel<AccountTransaction>(UtilMessages.accountTransaction04XE06(id)));
+
+            return Ok(new ResultViewModel<dynamic>(accountTransactionCollection, null));
         }
         catch (Exception ex)
         {
