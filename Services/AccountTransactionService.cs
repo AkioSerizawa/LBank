@@ -102,7 +102,7 @@ public class AccountTransactionService : IAccountTransactionService
         {
             using var context = new DataContext();
 
-            List<string> extractAccountColections = new List<string>();
+            List<string> extractAccountCollections = new List<string>();
 
             var accountTransaction = await context
                 .AccountTransactions
@@ -110,20 +110,21 @@ public class AccountTransactionService : IAccountTransactionService
                 .Include(x => x.Account)
                 .Include(x => x.TransactionType)
                 .Include(x => x.Account.User)
-                .Where(x => x.AccountId == accountId).OrderBy(x => x.TransactionDate).ToListAsync();
+                .Where(x => x.AccountId == accountId)
+                .OrderBy(x => x.TransactionDate).ToListAsync();
 
             foreach (var transactionItem in accountTransaction)
             {
-                string dateFormact = transactionItem.TransactionDate.ToString("dd/MM/yyyy");
+                string dataFormatted = transactionItem.TransactionDate.ToString("dd/MM/yyyy");
 
                 string extract = $"Tipo de Movimentação: {transactionItem.TransactionType.TypeDescription}" +
-                    $" | Histórico: {transactionItem.TransactionHistory} | Data: {dateFormact}" +
-                    $" | Transferecia para: {transactionItem.Account.User.UserName} | Valor: {transactionItem.TransactionValue}";
+                    $" | Histórico: {transactionItem.TransactionHistory} | Data: {dataFormatted}" +
+                    $" | Transferência para: {transactionItem.Account.User.UserName} | Valor: {transactionItem.TransactionValue}";
 
-                extractAccountColections.Add(extract);
+                extractAccountCollections.Add(extract);
             }
 
-            return extractAccountColections;
+            return extractAccountCollections;
         }
         catch (Exception ex)
         {

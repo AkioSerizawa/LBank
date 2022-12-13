@@ -103,11 +103,11 @@ public class AccountTransactionController : ControllerBase
                     break;
             }
 
-            string dateFormact = transfer.TransactionDate.ToString("dd/MM/yyyy");
+            string dataFormatted = transfer.TransactionDate.ToString("dd/MM/yyyy");
 
-            string extractMovimentation = $"Documento: {transfer.TransactionDocument} | Data da Movimentação: {dateFormact} | Valor: {transfer.TransactionValue} | De: {account.User.UserName} | Para: {accountTransfer.User.UserName} | Histórico: {transfer.TransactionHistory}";
+            string transactionStatement = $"Documento: {transfer.TransactionDocument} | Data da Movimentação: {dataFormatted} | Valor: {transfer.TransactionValue} | De: {account.User.UserName} | Para: {accountTransfer.User.UserName} | Histórico: {transfer.TransactionHistory}";
 
-            return Ok(new ResultViewModel<string>(@$"Movimentação realizada com sucesso - {extractMovimentation}", null));
+            return Ok(new ResultViewModel<string>(@$"Movimentação realizada com sucesso - {transactionStatement}", null));
         }
         catch (DbUpdateException ex)
         {

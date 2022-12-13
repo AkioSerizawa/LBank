@@ -22,7 +22,7 @@ public class UserService : IUserService
         }
     }
 
-    public User GetUser(int userId)
+    public User GetUserById(int userId)
     {
         try
         {
