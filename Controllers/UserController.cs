@@ -41,14 +41,49 @@ public class UserController : ControllerBase
             };
 
             await userService.CreateUser(user);
-            var account = accountService.AccountCreateUser(user.UserId);
+            var account = await accountService.AccountCreateUser(user.UserId);
 
-            return Ok(new ResultViewModel<dynamic>(new
-            {
-                user = user.UserName,
-                user.UserEmail,
-                account
-            }));
+            string accountCreateView = $"Conta criada com sucesso: Num. Conta: {account.AccountId} | Usuario: {user.UserName} | Email: {user.UserEmail} | Saldo: {account.AccountBalance}";
+
+            return Ok(new ResultViewModel<dynamic>(accountCreateView, null));
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(400, new ResultViewModel<User>(UtilMessages.user02XE02(ex)));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ResultViewModel<User>(UtilMessages.user02XE01(ex)));
+        }
+    }
+
+    [HttpPost("v1/user/createaccount")]
+    public async Task<IActionResult> AccountCreate(
+        [FromBody] AccountCreateViewModel model,
+        [FromServices] DataContext context
+    )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
+
+        var userVerify = userService.GetUserById(model.UserId);
+        if (userVerify == null)
+            return StatusCode(401, new ResultViewModel<User>(UtilMessages.user02XE06(model.UserId)));
+
+        var accountVerify = accountService.AccountUserByUserId(model.UserId);
+        if (accountVerify != null)
+            return StatusCode(401, new ResultViewModel<Account>(UtilMessages.account03XE04(model.UserId)));
+
+        if (model.InicialAccountBalance <= 0 || model.InicialAccountBalance >= 0)
+            model.InicialAccountBalance = 0;
+
+        try
+        {
+            var accountCreate = await accountService.AccountCreate(model);
+
+            string accountCreateView = $"Conta criada com sucesso: Num. Conta: {accountCreate.AccountId} | Usuario: {userVerify.UserName} | Saldo: {accountCreate.AccountBalance}";
+
+            return Ok(new ResultViewModel<dynamic>(accountCreateView, null));
         }
         catch (DbUpdateException ex)
         {

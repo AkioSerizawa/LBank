@@ -1,5 +1,6 @@
 using LBank.Data;
 using LBank.Models;
+using LBank.Services;
 using LBank.Utils;
 using LBank.ViewModel;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,8 @@ namespace LBank.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
+    private AccountService accountService = new AccountService();
+
     [HttpGet("v1/account/")]
     public async Task<IActionResult> GetAccountAsync(
         [FromServices] DataContext context)
@@ -42,11 +45,7 @@ public class AccountController : ControllerBase
     {
         try
         {
-            var account = await context
-                .Accounts
-                .Include(x => x.User)
-                .FirstOrDefaultAsync(x => x.AccountId == id);
-
+            var account = accountService.AccountUserById(id);
             if (account == null)
                 return NotFound(new ResultViewModel<Account>(UtilMessages.account03XE02(id)));
 

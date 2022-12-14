@@ -19,6 +19,7 @@ public class UtilMessages
     public static string user02XE03() => $"02XE03 - Usuário ou senha inválida";
     public static string user02XE04() => $"02XE04 - Senha inválida";
     public static string user02XE05() => "02XE05 - Email já cadastrado";
+    public static string user02XE06(int userId) => $"02XE06 - Usuário não encontrado - '{userId}'";
 
     #endregion
 
@@ -30,6 +31,8 @@ public class UtilMessages
         $"03XE02 - Nenhuma conta bancaria encontrada! | Conta pesquisada - '{id}' |";
 
     public static string account03XE03() => $"03XE03 - Nenhuma conta bancaria encontrada!";
+
+    public static string account03XE04(int userId) => $"03XE04 - Conta bancaria já cadastrada - Usuário selecionado '{userId}'!";
 
     #endregion
 
