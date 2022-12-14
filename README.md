@@ -2,13 +2,13 @@
 
 > Status: Desenvolvimento 🚧
 
-### Projeto em desenvolvimento, para treinar e melhorar os conhecimentos em ASP.Net com implementacao de ORM's e sistemas de segurança com autentificação
+### Projeto em desenvolvimento, para treinar e melhorar os conhecimentos em ASP.Net com implementação de ORM's e sistemas de segurança com autentificação
 
 ## Implementações já no projeto:
 * Criação de Usuário, junto a criação da conta bancaria
 * Saque
-* Deposito(tanto para a propria conta quanto para outra conta)
-* Transferencia
+* Deposito(tanto para a própria conta quanto para outra conta)
+* Transferência
 * Visualização da conta
 
 ## Features em Desenvolvimentos:

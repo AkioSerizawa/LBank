@@ -101,7 +101,6 @@ public class AccountTransactionService : IAccountTransactionService
         try
         {
             using var context = new DataContext();
-
             List<string> extractAccountCollections = new List<string>();
 
             var accountTransaction = await context
